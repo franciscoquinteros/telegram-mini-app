@@ -8,12 +8,11 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     keyboard = [
         [
-            InlineKeyboardButton("Play game", url='https://t.me/your_mini_app_url'),
+            InlineKeyboardButton("Play game", web_app={"url": "https://franciscoquinteros.github.io/telegram-mini-app/juego.html"}),
             InlineKeyboardButton("Exit", callback_data='exit'),
         ]
     ]
@@ -22,13 +21,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await update.message.reply_text('Welcome! Please choose an option:', reply_markup=reply_markup)
 
-
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle button press."""
     query = update.callback_query
     await query.answer()
-    await query.edit_message_text(text=f"Selected option: {query.data}")
-
+    if query.data == 'exit':
+        await query.edit_message_text(text="Goodbye!")
+    else:
+        await query.edit_message_text(text=f"Selected option: {query.data}")
 
 def main() -> None:
     """Start the bot."""
@@ -38,7 +38,6 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(button))
 
     application.run_polling()
-
 
 if __name__ == '__main__':
     main()
